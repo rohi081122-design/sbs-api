@@ -72,7 +72,7 @@ Router.post('/login',async(req,res)=>{
             fullName:user[0].fullName,
             email:user[0].email
         },
-        'sbs ka app 123',
+       (process.env.SEC_KEY),
         {
             expiresIn:'24h'
         }

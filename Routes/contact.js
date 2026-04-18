@@ -168,6 +168,32 @@ Router.delete('/byGender/:gender',async(req,res)=>{
 })
 
 
+// Update
+Router.update('/update/:id',async(req,res)=>{
+    try{
+        console.log(req.body)
+        const newdata = new Contact({
+            fullName:req.body.fullname,
+            email:req.body.email,
+            phone:req.body.phone,
+            address: req.body.address,
+            gender:req.body.gender
+        })
+        await Contact.findByIdAndUpdate({_id:req.params.id,(new newdata)})
+        res.status(200).json({
+            msg:'data updated'
+        })
+    }
+    catch(err)
+    {
+        console.log(err)
+        res.status(500).json({
+            error:err
+        })
+    }
+})
+
+
 
 
 
