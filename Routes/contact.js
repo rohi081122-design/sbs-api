@@ -46,7 +46,7 @@ Router.post('/add-contact',async(req,res)=>{
         const tokenData = await jwt.verify(token,process.env.SEC_KEY)
         console.log(tokenData)
 
-        const uploadResult = await cloudinary.uploader.uploadI(req.files.photo.tempFilePath)
+        const uploadResult = await cloudinary.uploader.upload(req.files.photo.tempFilePath)
         console.log(uploadedResult)
 
         const newContact = new Contact({
