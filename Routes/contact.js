@@ -167,21 +167,34 @@ Router.delete('/byGender/:gender',async(req,res)=>{
     }
 })
 
-
-// Update
-Router.update('/update/:id',async(req,res)=>{
-    try{
+// update 
+Router.put('/update/:id',async(req,res)=>{
+    try
+    {
         console.log(req.body)
-        const newdata = new Contact({
-            fullName:req.body.fullname,
+        const token = req.headers.authorization.split(" ")[1]
+        const tokenData = await jwt.verify(token,process.env.SEC_KEY)
+        const contactData = await Contact.findById(req.params.id)
+
+        if(contactData.userId != tokenData.userId)
+        {
+            return res.status(500).json({
+                msg:'you dont have permission to update this data'
+            })
+        }
+        // console.log(contactData)
+        const newData = {
+            fullName:req.body.fullName,
             email:req.body.email,
             phone:req.body.phone,
-            address: req.body.address,
-            gender:req.body.gender
-        })
-        await Contact.findByIdAndUpdate({_id:req.params.id,(new newdata)})
+            address:req.body.address,
+            gender:req.body.gender,
+            userId:req.body.userId
+        }
+        const updatedContact = await Contact.findByIdAndUpdate(req.params.id,newData,{new:true})
         res.status(200).json({
-            msg:'data updated'
+            msg:'contact updated',
+            result:updatedContact
         })
     }
     catch(err)
