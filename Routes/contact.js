@@ -3,6 +3,14 @@ const express = require('express')
 const Router = express.Router()
 const Contact = require('../models/Contact')
 const jwt = require('jsonwebtoken')
+const cloudinary = require('cloudinary').v2
+
+
+cloudinary.config({
+    cloud_name: 'Root',
+    api_key: '484364973516192',
+    api_secret:'BX0y8paR-PRk5abvCwSYogAQdPg'
+})
 
 // add contact
 
@@ -31,18 +39,25 @@ const jwt = require('jsonwebtoken')
 
 
 Router.post('/add-contact',async(req,res)=>{
-    try {
+    try { 
+        console.log(req)
         // console.log(req.headers.authorization.split(" ")[1])
         const token = req.headers.authorization.split(" ")[1]
         const tokenData = await jwt.verify(token,process.env.SEC_KEY)
         console.log(tokenData)
+
+        const uploadResult = await cloudinary.uploader.uploadI(req.files.photo.tempFilePath)
+        console.log(uploadedResult)
+
         const newContact = new Contact({
             fullName: req.body.fullName,
             email: req.body.email,
             phone: req.body.phone,
             address: req.body.address,
             gender:req.body.gender,
-            userId:tokenData.userId
+            userId:tokenData.userId,
+            imageId:uploadResult.public_id,
+            imageUrl:uploadResult.secure_url
         })
         
         const newData = await newContact.save()
@@ -66,7 +81,7 @@ Router.get('/all-contact',async(req,res)=>{
     {
         const token = req.headers.authorization.split(" ")[1]
         const tokenData = await jwt.verify(token,process.env.SEC_KEY)
-        const allContact = await Contact.find({userId:tokenData.userId}).select("_id fullName email phone address gender userId")
+        const allContact = await Contact.find({userId:tokenData.userId}).select("_id fullName email phone address gender userId imageUrl")
         res.status(200).json({
             contacts:allContact
         })
