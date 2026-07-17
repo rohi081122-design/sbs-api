@@ -6,7 +6,7 @@ const contactSchema = new mongoose.Schema({
     email:{type:String,required:true},
     address:{type:String,required:true},
     gender:{type:String,required:true},
-    userId:{type:String,required:true},
+    userId:{type:mongoose.Schema.Types.ObjectId,required:true,ref:'user'},
     imageUrl:{type:String,require:true},
     imageId:{type:String,require:true}
     
