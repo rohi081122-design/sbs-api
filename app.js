@@ -1,3 +1,10 @@
+const dns = require('dns');
+// Set DNS servers if the local resolver is 127.0.0.1/localhost to avoid querySrv ECONNREFUSED on Windows
+if (dns.getServers().includes('127.0.0.1') || dns.getServers().includes('::1') || dns.getServers().length === 0) {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+}
+
+
 require('dotenv').config()
 const express = require('express')
 const app = express()
